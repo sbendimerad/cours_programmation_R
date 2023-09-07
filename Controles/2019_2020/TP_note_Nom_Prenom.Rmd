@@ -1,0 +1,123 @@
+---
+title: "TP Noté de Programmation avec R"
+author: "Nom Prénom"
+date: "10/12/2019"
+output:
+  html_document:
+    df_print: paged
+---
+
+**Avant d'importer le fichier sur le serveur RStudio, changer son nom avec votre nom et votre prénom.** 
+
+**Rendu** : Le code doit être écrit dans les r chunks préformatés. Le fichier de sortie au format .html est à rendre sur Moodle, ou envoyer à l'adresse Servane.Gey@parisdescartes.fr avant 15h. Merci de mettre votre nom et votre prénom dans la partie "author".
+
+**Notation** : La notation prendra en compte la qualité du code (clarté, nombre de commandes le plus petit possible, rendu compréhensible), en plus de la qualité de la réponse. En particulier, tous les graphiques devront avoir un titre et des légendes appropriés. L'utilisation des librairies vues en cours sera fortement appréciée. **Le barême est indicatif**.
+
+```{r, echo=FALSE, message=FALSE}
+# r chunk réservé à la définition du répertoire de travail,
+# ainsi qu'au chargement des librairies nécessaires
+library(geojsonio)
+```
+
+# Exercice 1 (5 points)
+
+On s'intéresse ici aux données *mtcars*, disponibles directement via le logiciel R. 
+
+### Question 1
+
+Tracer le nuage de points de la variable *hp* en fonction de *mpg*. Ajouter la droite de régression linéaire sur le graphique.
+
+```{r, message=FALSE}
+
+```
+
+### Question 2
+
+Tracer les histogrammes en densité de la variable *mpg* suivant les modalités de la variable *cyl*. On pourra éventuellement colorer chaque histogramme.  
+```{r, message=FALSE}
+
+```
+
+
+# Exercice 2 (15 points)
+
+Cet exercice porte sur les données de commerces à Paris. Ces données, datant de 2014, recensent tous les commerces de la ville de Paris, leurs types, leurs arrondissements, leurs adresses, leurs longitudes et latitudes, ainsi que d'autres données géographiques.  
+
+Importer le fichier *commercesParis.RData* dans le répertoire de travail.
+
+### Question 1
+
+Charger les données avec la commande *load*
+```{r}
+
+```
+
+### Question 2
+
+Extraire de la table :  
+
+1. le commerce dont le numéro d'ordre est 86181  
+```{r}
+
+```
+
+
+2. tous les commerces situés au 137 avenue de Versailles  
+```{r}
+
+```
+
+
+3. le nombre de commerces situés avenue de Versailles  
+```{r}
+
+```
+
+
+### Question 3
+
+Créer une table au format tibble contenant les informations suivantes : ordre, code activité, libellé activité, adresse complète, numéro, type voie, libellé voie, iris, ilot, quartier, arrondissement, longitude et latitude.
+```{r}
+
+```
+
+
+### Question 4
+
+1. Créer et afficher la table contenant, pour chaque arrondissement, le nombre de commerces présents.
+```{r}
+
+```
+
+
+2. Faire un graphique représentant le nombre de commerces par arrondissement. 
+```{r, message=FALSE}
+
+```
+
+### Question 5
+
+Faire un graphique représentant les 10 types de commerces les plus présents à Paris sous forme de diagramme en barres horizontales, ordonné par ordre croissant. 
+
+Indication : voir la fonction *geom_col*.
+```{r}
+
+```
+
+### Question 6
+
+1. Importer les données cartographiques *arrondissements.geojson* des arrondissements de Paris dans le répertoire courant, et charger la carte avec la commande suivante  
+```{r}
+paris = geojson_read("arrondissements.geojson", what = "sp")
+```
+
+2. Créer une table contenant, par arrondissement, le nombre de commerces d'un type choisi parmi les 10 types de commerces les plus présents à Paris.  
+```{r}
+
+```
+
+3. Représenter une carte choroplète par arrondissement du nombre de commerces du type choisi à la question précédente.
+```{r}
+
+```
+

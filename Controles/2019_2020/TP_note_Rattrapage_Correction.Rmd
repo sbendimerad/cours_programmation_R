@@ -1,0 +1,248 @@
+---
+title: "Rattrapage du TP Noté de Programmation avec R"
+author: "Correction"
+date: "21/01/2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+**Avant d'importer le fichier sur le serveur RStudio, changer son nom avec votre nom et votre prénom.** 
+
+**Rendu** : Le code doit être écrit dans les r chunks préformatés. Le fichier de sortie au format .html est à rendre sur Moodle, ou envoyer à l'adresse Servane.Gey@parisdescartes.fr avant 15h. Merci de mettre votre nom et votre prénom dans la partie "author".
+
+**Notation** : La notation prendra en compte la qualité du code (clarté, nombre de commandes le plus petit possible, rendu compréhensible), en plus de la qualité de la réponse. En particulier, tous les graphiques devront avoir un titre et des légendes appropriés. L'utilisation des librairies vues en cours sera fortement appréciée. **Le barême est indicatif**.
+
+```{r, echo=FALSE, message=FALSE}
+# r chunk réservé à la définition du répertoire de travail,
+# ainsi qu'au chargement des librairies nécessaires
+# setwd('F:/Pro/Enseignement/IUT/Programmation R/Controles/2019_2020')
+library(geojsonio)
+library(readr)
+library(dplyr)
+library(tibble)
+library(tidyr)
+library(ggplot2)
+library(stringr)
+library(leaflet)
+library(forcats)
+```
+
+# Exercice 1 (5 points)
+
+On s'intéresse ici aux données *mtcars*, disponibles directement via le logiciel R. 
+
+### Question 1
+
+Tracer l'histogramme en densité de la variable *wt*.
+
+```{r, message=FALSE}
+g = ggplot(mtcars, aes(wt))
+g1 = g+geom_histogram(
+  aes(y=..density..), 
+  bins = 5, 
+  color = "white"
+  )+
+  labs(
+    title = "Distribution du poids",
+    x = "Poids",
+    y = "Densite"
+    )+
+  theme_light()
+g1
+```
+
+### Question 2
+
+Tracer les nuages de points de la variable *hp* en fonction de *mpg* suivant les modalités de la variable *am*, auxquels on ajoutera la droite de régression linéaire. On pourra éventuellement colorer chaque nuage.  
+```{r, message=FALSE}
+g = ggplot(mtcars, aes(mpg,hp, fill = am))
+g1 = g+geom_point()+geom_smooth(method = "lm", fullrange = TRUE)+
+  facet_grid(facets = am~., scale = "free_y")+
+  labs(
+    title = "Horse power vs Miles per gallon",
+    x = "Miles per Gallon",
+    y = "Horsepower"
+  )+
+  theme_light()
+g1
+```
+
+
+# Exercice 2 (15 points)
+
+Cet exercice porte sur les données de commerces à Paris. Ces données, datant de 2014, recensent tous les commerces de la ville de Paris, leurs types, leurs arrondissements, leurs adresses, leurs longitudes et latitudes, ainsi que d'autres données géographiques.  
+
+Importer le fichier *commercesParis.RData* dans le répertoire de travail.
+
+### Question 1
+
+Charger les données avec la commande *load*
+```{r}
+load('commercesParis.RData')
+
+```
+
+### Question 2
+
+Extraire de la table :  
+
+1. le commerce dont le numéro d'ordre est 86181  
+```{r}
+commerces %>% filter(ORDRE==86181)
+```
+
+
+2. tous les commerces situés au 248 rue Rivoli 
+```{r}
+commerces %>% filter(`ADRESSE COMPLETE`=="248 RUE RIVOLI")
+```
+
+
+3. le nombre de commerces situés rue Rivoli  
+```{r}
+commerces %>% filter(`LIBELLE VOIE`=="RIVOLI") %>% summarise(nombre=n())
+```
+
+
+### Question 3
+
+Créer une table au format tibble contenant les informations suivantes : ordre, code activité, libellé activité, adresse complète, numéro, type voie, libellé voie, iris, ilot, quartier, arrondissement, longitude et latitude.
+```{r}
+comm = commerces %>% select(
+  ORDRE,
+  `CODE ACTIVITE`,
+  `LIBELLE ACTIVITE`,
+  `ADRESSE COMPLETE`,
+  NUMERO,
+  `TYPE VOIE`,
+  `LIBELLE VOIE`,
+  IRIS,
+  ILOT,
+  QUARTIER,
+  ARRONDISSEMENT,
+  longitude,
+  latitude
+) 
+```
+
+
+### Question 4
+
+1. Créer et afficher la table contenant, pour chaque arrondissement, le nombre de commerces présents.
+```{r}
+arrond = comm %>% group_by(ARRONDISSEMENT) %>% 
+  summarise(nombre = n())
+arrond
+```
+
+
+2. Faire un graphique représentant le nombre de commerces par arrondissement. 
+```{r, message=FALSE}
+# Création de la table indiquant pour chaque arrondissement le nombre de commerces
+comm_nb_type = comm %>% left_join(arrond)
+
+# Création du graphique sous forme de diagramme en barres horizontales ordonnées
+g1 = ggplot(
+  comm_nb_type, 
+  aes(
+    fct_reorder(ARRONDISSEMENT, 
+                nombre
+                )
+    )
+  )+
+  geom_bar()+
+  coord_flip()+
+  labs(
+    title = "Nombre de commerces par arrondissement",
+    x = "Arrondissement",
+    y = "Effectif"
+  )+
+  theme_light()
+g1
+```
+
+### Question 5
+
+Faire un graphique représentant les 5 types de commerces les moins présents à Paris sous forme de diagramme en barres horizontales, ordonné par ordre décroissant de ce nombre (du bas vers le haut). 
+
+Indication : voir la fonction *geom_col*.
+```{r}
+# Création de la table rassemblant le top 5 des types de commerces les moins présents à Paris
+top5_activites = comm %>% group_by(`LIBELLE ACTIVITE`) %>% 
+  summarise(nombre = n()) %>% arrange(nombre) %>% 
+  slice(1:5)
+
+# Création du graphique
+g3 = ggplot(
+  top5_activites, 
+  aes(
+    fct_reorder(`LIBELLE ACTIVITE`, nombre, .desc = TRUE), 
+    nombre
+  )
+)+
+  geom_col()+
+  labs(
+    title = "Les 5 types de commerce les moins presents a Paris",
+    x = " ",
+    y = "Effectif"
+  )+
+  coord_flip()+
+  theme_light()
+g3
+
+```
+
+### Question 6
+
+1. Importer les données cartographiques *arrondissements.geojson* des arrondissements de Paris dans le répertoire courant, et charger la carte avec la commande suivante  
+```{r}
+paris = geojson_read("arrondissements.geojson", what = "sp")
+
+```
+
+2. Créer une table contenant, par arrondissement, le nombre de commerces d'un type choisi parmi les 5 types de commerces les moins présents à Paris.  
+```{r}
+bars = comm %>% 
+  filter(`CODE ACTIVITE`=="SA206") %>% 
+  group_by(ARRONDISSEMENT) %>% 
+  summarise(nb_bars = n())
+```
+
+3. Représenter une carte choroplète par arrondissement du nombre de commerces du type choisi à la question précédente.
+```{r}
+# On choisit les bars à sourire
+# Lorsque l'on essaie de faire la jointure de table, il y a un message d'erreur indiquant que
+# les variables arrondissement ne sont pas du même type dans les deux tables
+# => changement de la variable dans la table bars en variable de type integer
+bars$ARRONDISSEMENT = as.integer(bars$ARRONDISSEMENT)
+
+# Ajout de la variable à représenter dans la table des arrondissements de Paris,
+# ici le vombre de bars à sourires
+paris@data = left_join(paris@data, bars, by = c("c_ar"="ARRONDISSEMENT"))
+
+# Création de la palette de couleurs suivant la variable à représenter
+palette = colorBin("magma", 
+                   domain = paris$nb_bars,
+                   bins = seq(0, 3, by = 1)
+)
+
+# Création de la carte choroplète
+leaflet(paris) %>% 
+  addTiles() %>% 
+  addPolygons(
+    fillColor = ~palette(nb_bars),
+    fillOpacity = .5,
+    color = "black",
+    weight = 1.5,
+    opacity = 1
+  ) %>%
+  addLegend(
+    pal = palette,
+    values = ~nb_bars,
+    opacity = .8,
+    title = "Nombre de bars a sourires",
+    position = "topright"
+  )
+```
+

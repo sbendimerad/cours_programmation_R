@@ -1,0 +1,17 @@
+---
+title: "Cahier des Charges"
+author: "Commerces à Paris"
+date: "30/01/2020"
+output: pdf_document
+---
+
+## Commande
+Application R shiny, sous forme de tableaux de bord, recensant les commerces à Paris, et donnant des indications sur leur nombre et les types de commerces par arrondissement.
+
+## Demandes spécifiques
+
+* Un titre 
+* Un menu avec 2 éléments :  
+
+    + Elément 1 : tableau résumant les données et indiquant, par arrondissement, le nombre de commerces ainsi que le type de commerce le plus présent.  
+    + Elément 2 : tableau de bord présentant graphiquement les 10 types de commerce les plus présents, et les 10 types de commerce les moins présents. Les représentations seront effectuées sur le choix par l'utilisateur, soit de tous les arrondissements, soit d'un arrondissement.

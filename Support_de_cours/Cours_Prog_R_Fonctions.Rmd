@@ -1,0 +1,213 @@
+---
+title: "Programmation, Fonctions et Listes"
+author: " "
+date : " "
+output: 
+    beamer_presentation:
+        includes:
+            in_header: beamer-header.txt
+---
+
+## Rappels de programmation
+
+* **Traitement conditionnel** : exécution d'une ou plusieurs commande lorsqu'une condition est vraie.  
+
+* **Syntaxe** : 
+```{r, eval=FALSE}
+if(condition){
+ # commandes à exécuter 
+}
+if(condition){
+  # commandes à exécuter si la condition est vraie
+} else {
+  # commandes à exécuter si la condition est fausse
+}
+ifelse(condition, valeur_si_vraie, valeur_si_fausse)
+```
+où *condition* est une variable **booléenne**, c'est-à-dire à valeurs *TRUE/FALSE* ou *1/0*.  
+
+## Rappels de programmation (2)
+
+* **Conditions typiques** :
+```{r, eval=FALSE}
+var1 == valeur1
+var1 %in% c(valeur1, valeur2, ...)
+var2 <= num1
+var2 >= num2
+var2 <= num1 && var2 >= num2
+```
+* où  
+    + *var1* est une variable qualitative ou discrète, et *valeur1*, *valeur2*, ... sont des modalités de *var1*,
+    + *var2* est une variable quantitative, et *num1*, *num2* sont des valeurs seuil.  
+* **Note** : la fonction *ifelse()* fonctionne également sur un vecteur de conditions.
+
+## Rappels de programmation (3)
+
+* **Traitement itératif** : commandes à exécuter suivant les valeurs itératives d'une variable (*for()*), ou jusqu'à ce qu'une condition soit satisfaite (*while()*).  
+
+* **Syntaxe** :
+```{r, eval=FALSE}
+for(var in sequence){
+  # commandes à exécuter
+}
+```
+où *var* est une variable prenant ses valeurs dans le vecteur *sequence*.
+
+```{r, eval=FALSE}
+while(condition){
+  # commandes à exécuter
+}
+```
+où *condition* est une variable de type booléenne.  
+**Attention** : s'assurer que les commandes permettent de satisfaire *condition* au bout d'un nombre **fini** d'itérations, sous peine de tomber dans une boucle infinie.
+
+## TP : Exercice 1 
+
+* Ecrire deux boucle permettant de calculer respectivement  
+    + $\sum_{i=1}^{10000} 1/i$,
+    + $\sum_{i\in \{1, \ldots, 10000 \ | \ i \ pair\}} 1/i$.
+
+* Réécrire les mêmes boucles, mais en partant de 10000 jusqu'à 1.  
+
+* Ajouter dans les boucles précédentes une condition permettant d'enlever les valeurs  $i \in \{198, 2067, 532, 8934\}$ des calculs des sommes.
+
+## Fonctions
+
+* **Procédure** : calculs à partir d'une ou plusieurs valeurs d'entrée, sans retour de résultat
+```{r, eval=FALSE}
+preocedure = function(entree){
+  # Commandes à exécuter, fonctions de la valeur d'entree
+}
+```
+
+* **Fonction** : calculs à partir d'une ou plusieurs valeurs d'entrée, avec retour de résultat
+```{r, eval=FALSE}
+fonction = function(entree){
+  # Commandes à exécuter, fonctions de la valeur d'entree
+  # valeur = valeur calculée par la fonction
+  valeur
+}
+```
+
+* Les procédures ou fonctions sont stockées dans des objets de type *function*, sous le nom donné (ici *procedure* et *fonction*)  
+
+* *entree* peut être une suite de valeurs.
+
+## Fonctions (2)
+
+* Appel des fonctions :
+```{r, eval=FALSE}
+procedure(valeurs entree)
+fonction(valeurs entree)
+var = fonction(valeurs entree)
+```
+
+* Ajout de paramètres : on peut ajouter des paramètres, dont des valeurs par défaut peuvent être indiquées. Typiquement, ces paramètres permettent de définir des conditions qui changent ou ajoutent des calculs dans la fonction.
+```{r}
+fonction = function(entree, parametres){}
+```
+ajout de paramètres sans valeur par défaut,
+
+```{r}
+fonction = function(entree, parametres = valeur){}
+```
+ajout de paramètres avec valeur par défaut.
+
+## TP : Exercice 2 
+
+* Reprendre les deux boucles de l'exercice 1.  
+
+* Créer à partir de ces boucles deux fonctions permettant de calculer les sommes suivantes :  
+    + $\sum_{i=1}^{n} 1/i$,
+    + $\sum_{i\in \{1, \ldots, 10000 \ | \ i \ pair\}} 1/i$,  
+    
+où $n$ sera la valeur d'entrée de ces deux fonctions.  
+
+* Créer une fonction unique, avec paramètre, permettant de calculer l'une des deux sommes précédentes suivant la valeur du paramètre.  
+
+* Tester la fonction sur plusieurs valeurs de $n$, avec des paramétres différents.
+
+## Listes
+
+* **liste** : Objet permettant de stocker dans une même variable (de type *list()*) des éléments de types différents (tables, vecteurs, listes, etc...).  
+
+* Liste vide :  
+```{r, eval=FALSE}
+list()
+```
+
+* Exemple : liste composée de 3 éléments de type différents  
+```{r}
+list(1:10, head(LETTERS), head(mtcars))
+```
+
+## Listes (2)
+
+* Exemple : liste **nommée** 
+```{r}
+l = list(v = 1:10, 
+     lettres = head(LETTERS), 
+     modeles = head(mtcars)
+     )
+l
+```
+
+## Listes (3)
+
+Appel dans la liste  
+
+* d'un élément  
+```{r}
+l[[1]]
+l$v # si liste nommée
+```
+
+* d'une liste
+```{r}
+l[1:2]
+```
+
+## TP : Exercice 3 
+
+* Créer une fonction prenant en entrée la valeur de $n$ et donnant en sortie une liste nommée retournant les 2 valeurs suivantes :  
+    + $n$,
+    + le vecteur $$u = \left(\sum_{i=1}^{n} 1/i, \sum_{i\in \{1, \ldots, 10000 \ | \ i \ pair\}} 1/i, \sum_{i\in \{1, \ldots, 10000 \ | \ i \ impair\}} 1/i\right).$$  
+    
+* Tester la fonction sur plusieurs valeurs de $n$.
+
+## Fonctions spécifiques
+
+* Création de tables résumés à partir d'une *fonction* : si *table* est une table au format *data.frame* ou *tibble*
+    + **table %>% summarise(fonction1(var1), fonction2(var2))** : résumé de *table* suivant les calculs de fonctions sur des variables,
+    + **table %>% summarise_all(fonction)** : résumé de *table* suivant le calcul de *fonction* sur toutes les variables,
+    + **table %>% summarise_at(vars, fonction)** : résumé de *table* suivant les calculs de *fonction* sur la liste de variables *vars*,
+    + **table %>% summarise_if(condition, fonction)** : résumé de *table* suivant les calculs de *fonction* sur les variables vérifiant *condition*.
+    
+* Pour la gestion de listes, voir les fonctions **map()** et de type **map_xxx()** de la librairie *purrr*, disponible dans tidyverse.
+
+## Fonctions spécifiques (2)
+
+* Exemple : table *mtcars* résumée par les moyennes sur les variables  
+```{r, message=FALSE}
+library(dplyr)
+mtcars %>% summarise_all(mean)
+```
+
+## Fonctions spécifiques (3)
+
+* Exemple : table *mtcars* résumée par les moyennes sur les variables *mpg*, *hp*, *wt*
+```{r}
+mtcars %>% summarise_at(c("mpg", "hp", "wt"), mean)
+```
+
+* Exemple : table *starwars* résumée par les moyennes des variables numériques
+```{r}
+starwars %>% summarise_if(is.numeric, mean, na.rm = TRUE)
+```
+
+## TP : Exercice 4 avec dplyr
+
+Résumer la table *iris*  
+
+* par les moyennes et médianes des variables numériques,
+* par les moyennes par espèce des variables numériques.

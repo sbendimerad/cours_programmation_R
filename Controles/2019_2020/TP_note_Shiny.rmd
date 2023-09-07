@@ -1,0 +1,74 @@
+---
+title: "TP noté de programmation avec R"
+author: "Application Shiny sur les données de football"
+date: "24/02/2020"
+output: pdf_document
+---
+
+\bigskip
+\begin{center}
+\textbf{L'application R Shiny doit être codée et compilée sur le serveur RStudio}
+\end{center}
+\bigskip
+
+**Rendu** : répertoire compressé au format *.zip* portant **votre nom et votre prénom**. Le répertoire doit contenir :
+
+* le fichier *app.R* avec les codes de l'application Shiny, 
+* les données *Football_2009_2016.RData*,
+* tout élément nécessaire pour faire tourner l'application.  
+
+Le répertoire compressé est à envoyer à l'adresse Servane.Gey@parisdescartes.fr **avant 11h30**. 
+
+**Notation** : La notation prendra en compte la qualité du code (clarté, nombre de commandes le plus petit possible, rendu compréhensible), ainsi que la qualité de la présentation de l'application, qui doit être lisible et compréhensible par n'importe-qui. L'utilisation des librairies vues en cours sera fortement appréciée. **Le barême est indicatif**.  
+
+## Cahier des charges
+
+### Demande
+Application web sous forme de tableau de bord affichant, pour un championnat, les statistiques des joueurs par club pour une saison, ainsi que des informations agrégées sur chaque saison.
+
+### Contenu
+Un titre et deux tableaux de bords :  
+
+* Tableau 1 :  
+    + deux boîtes (*box()*) permettant de choisir respectivement le club et la saison (*selectInput()*),
+    + une boîte affichant la table (*tabBox()*) d'un choix de statistiques intéressantes concernant les joueurs du club choisi pour la saison sélectionnée.
+    + **(Optionnel)** Améliorer la présentation du tableau à l'aide de la librairie *DT*.
+    
+
+* Tableau 2 :  
+    + deux boîtes filtres (*box()*) permettant de sélectionner le club d'une part, et la statistique agrégée sur chaque saison représentée d'autre part (*selectInput()*). La liste des statistiques agrégées sur chaque saison est la suivante (l'index des variables se trouve dans le document **Appendix to the football database**) :  
+        + Nombre moyen de passes décisives,
+        + Nombre moyen de cartons jaunes,
+        + Nombre moyen de cartons rouges,
+        + Nombre moyen de tirs par match,
+        + Nombre moyen d'hommes du match,
+        + Note moyenne.  
+        
+    + deux boîtes graphiques (*box()*) représentant respectivement  
+        + l'évolution de la statistique agrégée sur chaque saison en fonction de la saison,
+        + le nombre moyen de buts marqués sur toute la saison en fonction de la statistique agrégée choisie. **(Optionnel)** afficher l'année de la saison sur les points du graphique. 
+     
+     + une boîte filtre (*box()*) permettant de choisir la position de jeu des joueurs sur lesquels la statistique est agrégée ("Tous les joueurs","Attaquant", "Milieu", "Défenseur", ou "Gardien de but").
+    + **(Optionnel)** une boîte d'information (*infoBox()*) affichant la progession de la statistique agrégée choisie entre 2009 et 2016.
+
+## Indications techniques
+
+### Données
+Les données se trouvent dans le fichier *Football_2009_2016.RData* et l'index des variables dans le document *Appendix to the football database*. Ces deux fichiers se trouvent dans COMMUN/2ème année FA/2019-2020/Programmation R/DST/TP2.  
+
+Le fichier de données contient les statistiques par saison et par joueur pour tous les clubs et tous les gros championnats d'Europe entre 2009 et 2016. Il faut donc, au début de l'application Shiny,  
+
+* charger les données,
+* appliquer un filtre permettant de choisir le championnat sur lequel l'application sera faite (choix entre 5 championnats : *England, France, Germany, Italy, Spain*).  
+
+L'application sera faite sur ces données de championnat.
+
+### Squelette
+Le squelette de l'application Shiny est le fichier *app.R* à charger sur le serveur RStudio à partir du répertoire COMMUN/2ème année FA/2019-2020/Programmation R/DST/TP2. 
+
+### Propositions pour la partie *server()*
+
+Le **Tableau 2** nécessite un certain nombre de filtres (club, statistique et position). On propose donc de créer deux variables **reactive()** permettant de filter les données du championnat sélectionné  
+
+1. par club et par position du joueur pour la première variable,
+2. puis par la statistique sur laquelle le résumé agrégé par saison sera calculé (ainsi que le nombre moyen de buts marqués par saison) pour la deuxième variable.

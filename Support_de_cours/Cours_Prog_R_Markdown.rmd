@@ -1,0 +1,200 @@
+---
+title: "Quelques rappels sur R Markdown"
+author: ' '
+date: ' '
+output:
+  beamer_presentation: 
+    includes:
+      in_header: beamer-header.txt
+  ioslides_presentation: default
+---
+
+## R Markdown
+
+* Logiciel de traitement de texte intégré à RStudio  
+
+* Permet l'intégration et la compilation de code R dans le texte  
+
+* Voir [ici](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf) pour une liste non-exhaustive des syntaxes et options  
+
+* **Ouvrir un document R Markdown** sous RStudio :
+    + Sélectionner "*R Markdown*" dans le menu d'ouverture de script R,
+    + Choisir le type de document, le titre, l'auteur et sélectionner le format de sortie (attention : nécessite LateX pour une sortie en .pdf, et Word ou Open Office pour une sortie en .docx ou .ppt),
+    + RStudio ouvre un script avec l'extension "*.rmd*".  
+    
+* **Compiler un document R Markdown** sous RStudio : cliquer sur "*knit*" (le format de sortie peut être changé dans le menu déroulant).  
+
+* **Attention** Les librairies et les données doivent **absolument** être chargées dans le fichier *.rmd* et non dans la console.
+
+## En-tête et titre
+
+A l'ouverture du script, une démonstration est intégrée, dont l'en-tête contenant le titre, l'auteur et le format du document, qui peuvent être changés.
+
+```{r, eval=FALSE}
+---
+title: "Titre"
+author: "Prénom Nom"
+date: "18/11/2019"
+output: html_document 
+---
+```
+
+## Texte
+
+* Titres 
+
+```{r, eval=FALSE}
+# Titre de niveau 1
+## Titre de niveau 2
+...
+###### Titre de niveau 6
+```
+
+* Texte 
+
+```{r, eval=FALSE}
+texte 
+
+texte
+```
+
+texte
+
+texte
+
+```{r, eval=FALSE}
+**gras**  *italique*
+```
+
+**gras**  *italique*
+
+## Listes
+
+Listes non-ordonnées
+
+```{r, eval=FALSE}
+* Elément 1  
+* Elément 2
+        + sous-élément 1
+        + sous-élément 2
+```
+
+* Elément 1  
+* Elément 2
+    + sous-élément 1
+    + sous-élément 2
+        
+## Listes (2)
+
+Listes ordonnées
+
+```{r, eval=FALSE}
+1. Elément 1
+2. Elément 2
+        1. sous-élément 1
+        2. sous-élément 2
+```
+
+1. Elément 1
+2. Elément 2
+    1. sous-élément 1
+    2. sous-élément 2
+        
+## Tableaux
+
+```{r, eval=FALSE}
+Tableau   | En-tête 1 | En-tête 2 |
+--------- | --------- | --------- |
+Entrée 1  | Cellule   | Cellule   |
+Entrée 2  | Cellule   | Cellule   |
+```
+
+Tableau   | En-tête 1 | En-tête 2 |
+--------- | --------- | --------- |
+Entrée 1  | Cellule   | Cellule   |
+Entrée 2  | Cellule   | Cellule   |
+
+
+## Images et liens
+
+* Insérer un lien 
+```{r, eval=FALSE}
+[lien](https://rstudio.com/)
+```
+[lien](https://rstudio.com/)
+
+* Insérer une image
+```{r, eval=FALSE}
+![Logo RStudio](rstudio-og.PNG)
+```
+![Logo RStudio](rstudio-og.PNG)
+
+## Intégration de code R
+
+* Intégration de code R dans un **chunk** (ctrl+alt+i)
+
+![](chunk.png)
+
+* Ne pas afficher le chunk dans le document
+
+![](echo.png)
+
+* Ne pas compiler le code dans le document
+
+![](eval.png)
+
+* Ne pas afficher les messages et/ou warnings spécifiques au code
+
+![](message.png)
+
+## Chunk R : options spécifiques
+
+* Régler la taille des figures
+
+![](figures.png)
+
+* Afficher la sortie d'une table sous forme de tableau
+
+```{r}
+library(knitr)
+kable(data.frame(var1 = c(1,2), var2=c(3,4)))
+```
+
+* Intégrer du code au milieu du texte : chunk encadré par un seul ` au lieu de 3.
+
+## Présentations R Markdown
+
+* Choisir le mode "présentation" à l'ouverture du fichier R Markdown
+
+* Choisir le titre, l'auteur et le format du fichier de sortie :
+  + HTML, visible dans n'importe-quel navigateur web,
+  + PDF si LateX est installé, visible avec Adobe Reader,
+  + Powerpoint si Word ou Open Office est installé.
+
+* En-tête du fichier (éditable)
+```{r, eval=FALSE}
+---
+title: "Titre"
+author: "Prénom Nom"
+date: "18/11/2019"
+output: ioslides_presentation 
+---
+
+```
+
+## Présentations R Markdown (2)
+
+* Rédaction et commandes identiques aux documents Markdown  
+
+* Unique différence : gestion du document par transparents (slides)  
+
+* Transparent de transition (uniquement le titre)  
+```{r, eval=FALSE}
+# Titre de la transition
+```
+
+* Nouveau transparent (avec son titre)  
+```{r, eval=FALSE}
+## Titre du transparent
+```
+

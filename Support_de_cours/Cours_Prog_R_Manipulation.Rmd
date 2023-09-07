@@ -1,0 +1,458 @@
+---
+title: "Programmation Statistique avec R"
+author: "Servane Gey"
+date : "DUT STID en Alternance"
+output: 
+    beamer_presentation:
+        includes:
+            in_header: beamer-header.txt
+---
+
+## Coordonnées et références
+
+\center Servane.Gey@parisdescartes.fr - Bureau B4-18 \center
+
+* **Documents** :
+Moodle, COMMUN
+     
+* **Références** (liste non-exhaustive) :
+    + *Cours de F.-X. Jollois* : https://fxjollois.github.io/cours-2018-2019/stid-2afa--prog-r/
+    + *R for Data Science*, H. Wickham & G. Grolemund, O'Reilly, (https://r4ds.had.co.nz/)
+    + *The Grammar of Graphics*, L. Wilkinson, Springer (https://www.springer.com/us/book/9780387245447)
+    + *Tidyverse* : https://tidyverse.tidyverse.org/
+    + *Visualisation* : https://ggplot2.tidyverse.org/reference/
+    + *Applications Web* : https://shiny.rstudio.com/
+    + *R Markdown* : https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf
+    + *RStudio Cheat Sheets* : https://www.rstudio.com/resources/cheatsheets/
+
+## Organisation et validation
+
+* **Organisation** :
+    + 33h de cours et TP répartis sur 11 séances de 3h  
+    
+
+* **Validation** :
+    + 1 TP noté en milieu de semestre (50 %)  
+    
+    + 1 DST sur machine en fin de semestre (50 %)  
+    
+
+## Plan du cours
+
+1. **Manipulation et analyse de données**
+    + Importation et exportation de données (package *readr*)
+    + Manipulation de tables de données (package *dplyr*)
+    + Statistiques : quelques exemples avec *dplyr*
+
+2. **Visualisation de Données**
+    + Représentations graphiques (package *ggplot2*)
+    + Cartographie (package *leaflet*)
+
+3. **Fonctions**
+    + Ecriture de fonctions avec *dplyr*
+    + Fonctions spécifiques à l'analyse de données
+    + Gestion des sorties sous forme de listes
+    
+4. **Rapports et Présentations**
+    + Rappels sur R Markdown
+    + Rédaction de rapports et de présentations
+    
+5. **Applications Web**
+    + Rappels sur R Shiny
+    + Tableaux de bord (package *shinydashboard*)
+    + Conception d'une application avec interface utilisateur
+
+## Installation de R et RStudio en local
+
+* Télécharger la dernière version de R adaptée à votre système d'exploitation (Windows, Mac OS, Linux) via le CRAN de l'université de Lyon :
+https://pbil.univ-lyon1.fr/CRAN/  
+
+* Télécharger la dernière version de RStudio adaptée à votre système d'exploitation (Windows, Mac OS, Linux) via le site rstudio :
+https://rstudio.com/products/rstudio/download/   
+
+* Installer les 2 logiciels en éxécutant les fichiers téléchargés.  
+
+* **Attention** RStudio est une interface graphique très évoluée pour une utilisation simplifiée du logiciel R. L'installation de R au préalable est donc indispensable avant toute utilisation de RStudio.  
+
+* L'installation des librairies (ou *packages*) peut se faire directement via la console, ou via l'interface de RStudio.
+
+## Serveur RStudio
+
+* Serveur dédié à l'utiliation de R, dont la dernière version y est installée, avec toutes les librairies régulièrement mises à jour.  
+
+* Connexion sur l'interface RStudio directement via la connexion sur le serveur. 
+
+* Serveur RStudio de l'IUT (disponible uniquement en local, i.e. sur les ordinateurs de l'IUT) : hhtp://rstudio.iutparis.local:8787/  
+
+* Première connexion : login et mot de passe = login de l'IUT.  
+
+* Changer immédiatement votre mot de passe (voir le mail de M. Jollois). 
+
+## Introduction
+
+* **R** : 
+    + langage de programmation pour le traitement des données
+    + fonctions propres intégrées au langage
+    + nombreuses librairies
+    
+* **tidyverse** : 
+    + ensemble de librairies développées par l'équipe de R Studio
+    + librairies principalement utilisées dans ce cours : *magrittr*, *tibble*, *dplyr*, *readr*, *readxls*, *ggplot2*
+    
+* **Data frames** : 
+    + format des données dans R
+    + *observations* (=individus) en lignes et *variables* en colonnes
+
+* **tibble** : 
+    + format *tbl_df* basé sur un *data.frame*
+    + traitement identique aux *data.frame*
+
+* **Conseils** :
+    + préférer les librairies développées par des laboratoires ou des entreprises (mises à jour susceptibles d'être plus régulières)
+    + écrire et sauvegarder ses codes dans un script R ou R Studio
+    + se référencer à l'aide pour l'utilisation des fonctions
+
+## Les données avec *tibble*
+```{r}
+head(mtcars)
+```
+
+```{r}
+library(tibble)
+as_tibble(mtcars)
+```
+
+
+# Manipulation et Analyse de Données
+
+## Importation de données à partir de fichiers externes
+
+* Importation de données à partir de fihiers externes de divers formats
+
+* Importation à partir d'un fichier .txt :
+```{r, message=FALSE}
+library(readr)
+iris = read_delim("Donnees/iris.txt", delim="\t")
+iris
+```
+
+## Importation de données à partir de fichiers externes (2)
+* Importation à partir d'un fichier .xlsx :
+```{r}
+library(readxl)
+iris = read_excel("Donnees/iris.xlsx")
+str(iris)
+```
+
+## Importation de données à partir de fichiers externes (3)
+* Importation à partir d'un fichier SAS :
+```{r}
+library(haven)
+iris = read_sas("Donnees/iris.sas7bdat")
+iris
+```
+
+<!-- ## Importation de données issues du Web -->
+
+<!-- * Données de type JSON (très utilisé sur le web)  -->
+<!-- * Exemple : site [SWAPI](https://swapi.co/) référençant toutes les informations disponibles sur la saga Star Wars  -->
+
+<!-- ```{r} -->
+<!-- library(jsonlite) -->
+<!-- fromJSON("https://swapi.co/api/people/1/") -->
+<!-- ``` -->
+
+## Importation de données issues du Web (2)
+
+2. Lecture de pages Web
+    + Exemple
+```{r, message=FALSE}
+library(rvest)
+sw = read_html("https://www.imdb.com/title/tt0076759/")
+```
+
+
+## Manipulation de données 
+
+* Le "pipe" %>% (package *magrittr*) : ctrl+shift+m
+      + permet d'enchaîner les opérations 
+      + écriture plus naturelle et plus lisible
+```{r}
+x = c(1,4,2,3,6,10,2,11)
+mean(x)
+x %>% mean
+```
+
+* Manipulation de données (package *dplyr*) : ajouts de variables, filtres, organisation, etc...
+
+
+## Manipulation de données (2)
+
+* Ajouter à la table de données mtcars le nom des modèles de voiture contenu dans les noms de lignes de la table (nouvelle variable dénommée *model*) :
+```{r, message=FALSE}
+library(tibble)
+cars = mtcars %>% rownames_to_column("model")
+```
+
+* Filtrer les observations suivant les valeurs de variables
+```{r, echo=FALSE, message=FALSE}
+library(dplyr)
+```
+
+```{r, eval=FALSE}
+library(dplyr)
+cars %>% filter(mpg>=30)
+cars %>% filter(cyl==4)
+cars %>% filter(cyl==4 & qsec >17)
+cars %>% filter(between(mpg, 30, 32))
+```
+
+## Manipulation de données (3)
+
+* Sélection de lignes par leurs indices (numéros)
+```{r, eval=FALSE}
+cars %>% slice(1:2)
+cars %>% slice(c(2,6))
+cars %>% slice(seq(1,n(), by=4))
+cars %>% slice(31:n())
+```
+où $n()$ est le nombre de lignes de la table
+
+* Sélection de variables
+```{r, eval=FALSE}
+cars %>% select(model)
+cars %>% select(mpg,cyl,model)
+cars %>% select(2,5,7)
+cars %>% select(starts_with("m"))
+```
+Voir ?select_helpers pour la liste des possibilités
+
+## Manipulation de données (4)
+
+* Tri selon les valeurs d'une ou plusieurs variables
+```{r, eval=FALSE}
+cars %>% arrange(mpg)
+cars %>% arrange(am,mpg)
+cars %>% arrange(desc(mpg))
+```
+où desc() indique un ordre décroissant.
+
+* Ajout de variables
+```{r, eval=FALSE}
+cars %>% mutate(cyl_ratio=cyl/carb)
+cars %>% mutate(cyl_ratio=cyl/carb, wt_ratio=wt/hp)
+```
+
+* Pour garder uniquement la variable créée
+```{r, eval=FALSE}
+cars %>% transmute(cyl_ratio=cyl/carb)
+```
+
+## Manipulation de données (5)
+
+* Suppression des doublons
+```{r}
+unique(cars$cyl)
+cars %>% select(cyl) %>% distinct
+```
+
+## Manipulation de données (6)
+
+* Enchaîner les opérations
+```{r}
+cars %>% select(starts_with("c")) %>% summary
+cars %>% select(mpg,wt,hp) %>% as_tibble %>% head
+```
+
+## Manipulation de données (7)
+
+* Grouper les individus en fonction des modalités d'une variable
+```{r, eval=FALSE}
+cars %>% group_by(cyl)
+```
+
+* Exemple : déterminer le nombre de modèles de la table *cars* dans chaque catégorie de cylindre
+```{r}
+cars %>% group_by(cyl) %>% summarise(n=n())
+```
+
+
+## Manipulation de données (8)
+
+* Joindre deux tables en fonction des valeurs de l'une des variables
+```{r}
+engine = tibble(
+  cyl = c(6,8,12),
+  type = c("medium", "big", "very big")
+)
+```
+Extraction des tables en jointure entre cars et engine :
+```{r, eval=FALSE}
+cars %>% inner_join(engine) 
+cars %>% left_join(engine)
+cars %>% right_join(engine)
+cars %>% full_join(engine)
+cars %>% semi_join(engine)
+cars %>% anti_join(engine)
+```
+
+## TP : Exercice 1 (avec *tibble*, *dplyr* et *readr*)
+
+* Donner la liste des différentes espèces d'iris dans la table *iris*
+* Sélectionner 
+    + les 60 premiers iris de la table
+    + les 50 derniers iris de la table
+    + 1 iris sur 10 dans la table
+* Sélectionner les iris ayant les plus longues Sépales et les plus longues Pétales. En donner la répartition par espèce.
+* Créer une nouvelle table en organisant la table *iris* par ordre alphabétique des espèces et par ordre croissant des longueurs de Sépale
+* Créer une nouvelle table en ajoutant 2 colonnes à la table *iris* contenant respectivement les rapports longueur/largeur de Sépale et de Pétale 
+* Importer les 4 tables concernant les indicateurs de gouvernance fournis par la banque mondiale, *WGIValues.csv*, *WGICountry.csv*, *WGISerie.csv* et *WGIType.csv*
+* Créer une nouvelle table contenant les noms des pays, séries et indicateurs à la place des codes correspondants
+
+## Données spécifiques
+
+* Gestion de chaînes de caractères (package *stringr*) :
+```{r}
+library(stringr)
+str_length(cars$model)
+str_c(cars$model, collapse = ", ")
+str_sub(cars$model, 1, 5)
+```
+
+## Données spécifiques (2)
+
+* Gestion des expressions régulières (package *stringr*) :
+```{r, eval=FALSE}
+str_subset(cars$model, "Merc")
+str_subset(cars$model, "[0-9]")
+str_detect(cars$model, "[0-9]")
+str_match(cars$model, "(.+)[ ](.+)")
+str_split(cars$model, " ")
+```
+
+## TP : Exercice 2 (avec *stringr*)
+
+* Créer le vecteur x composé des $5$ chaînes de caractères suivantes : "Je" "suis" "en" "DUT" "STID"   
+
+* Ajouter la chaîne "alternance" à la fin du vecteur x
+* Donner le nombre de caractères composant chaque élément de x
+* Ajouter une majuscule à "alternance" (indication : str_to_title)
+* Trouver tous les éléments de x contenant le caractère "e" et les extraire.
+* Concaténer les éléments de x afin de ne former qu'une seule phrase. Combien de caractères contient ce nouvel objet ? Interpréter.
+* Re-découper l'objet obtenu en chaînes de caractères distinctes
+
+## Dates
+
+* Gestion des dates aisée (package *lubridate*)
+```{r, message=FALSE}
+library(lubridate)
+now()
+today = today()
+today
+year(today)
+```
+
+## Dates (2)
+```{r, eval=FALSE}
+month(today)
+month(today, label = TRUE)
+month(today, label = TRUE, abbr = FALSE)
+day(today)
+mday(today)
+wday(today)
+wday(today, label = TRUE)
+wday(today, label = TRUE, week_start = 1)
+wday(today, week_start = 1)
+yday(today)
+```
+
+## Dates (3)
+
+```{r}
+today + period(week = 1, day = 3)
+today + period("1W 3D")
+today - years(1) - days(10)
+```
+
+## Dates (4)
+
+* Calculer des périodes en secondes ou en années (par défaut en jours) :
+```{r}
+bday = ymd("19771114")
+diff = today - bday
+diff
+as.period(diff)
+as.duration(diff)
+```
+
+## TP : Exercice 3 (avec *tibble*, *dplyr*, *stringr*)
+
+* Afficher le jeu de données *starwars* (package *dplyr*)
+* Donner le nombre total de personnages distincts apparaissant dans les trilogies "Star Wars" (indication : nrow)
+* Donner le pourcentage de valeurs manquantes par variable (indication : is.na, colSums)
+* Faire de même avec les personnages (indication : rowSums)
+* Lister les différentes races des personnages de la table *starwars*. Combien de races apparaissent dans les trilogies "Star Wars" ?
+* Donner le nombre de personnages dans chaque race, en triant par ordre décroissant de ce nombre
+* Choisir 2 races pour lesquelles on dénombre plus de 2 personnages et donner le nom de ces personnages. Quels sont les personnages dont la race est indéfinie ? (indication : is.na)
+* **Optionnel** : donner les noms des personnages ayant changé de couleur de cheveux (indication : regarder la variable hair_color et utiliser la librairie *stringr*)
+* **Optionnel** : quels personnages apparaissent dans plus de 4 films ? (indication : bind_cols, add_column)
+
+
+## Statistiques sous R : quelques exemples
+
+* Résumer une ou plusieurs variables dans un data.frame :
+```{r}
+cars %>% summarise(n=n(), mpg_av=mean(mpg), 
+                   wt_med=median(wt))
+```
+
+* Résumer toutes les variables dans un data.frame suivant le même indicateur statistique :
+```{r}
+mtcars %>% summarise_all(mean)
+```
+
+## Statistiques sous R : quelques exemples (2)
+
+* Résumer par groupes définis par les modalités d'une variable :
+```{r}
+cars %>% group_by(cyl) %>% 
+  summarise(n=n(), mpg_av=mean(mpg), wt_med=median(wt))
+
+```
+
+## Statistiques sous R : quelques exemples (2)
+
+* Utilisation des fonctions descriptives classiques 
+```{r}
+cars %>% select(mpg,wt,qsec) %>% colMeans
+cars %>% select(mpg,wt,qsec) %>% cor
+```
+
+## Statistiques sous R : quelques exemples (3)
+
+* Calculs d'agrégats sur toutes les variables 
+```{r}
+cars %>% group_by(cyl) %>% 
+  select(cyl,mpg,wt,qsec) %>% 
+  summarise_all(mean)
+```
+
+## Statistiques sous R : quelques exemples (4)
+
+* Production de graphiques avec les fonctions de base
+```{r, fig.height=3, fig.width=4}
+cars %>% select(mpg,wt) %>% 
+  plot(main="Weight vs Miles/gallon")
+```
+
+## TP : Exercice 4 (avec *tibble*, *dplyr*)
+
+* Afficher les indicateurs statistiques résumant les données *iris*  
+
+* Créer deux tables résumant ces mêmes données dont les valeurs sont, par espèce, le nombre d'iris, les moyennes et les médianes de chaque variable, l'une concernant les Sépales, l'autre les Pétales  
+
+* Créer une seule table rassemblant toutes les informations précédentes  
+
+* Représenter la distribution des espèces sous forme de diagramme en barres et de diagramme circulaire (indication : table, barplot, pie)  
+
+* Représenter le lien entre la couleur des yeux et la couleur des cheveux des personnages de la base de données *starwars* (indication : table, barplot)

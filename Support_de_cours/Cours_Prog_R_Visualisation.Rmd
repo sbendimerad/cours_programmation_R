@@ -1,0 +1,727 @@
+---
+title: "Visualisation de Données"
+author: " "
+date : " "
+output: 
+    beamer_presentation:
+        includes:
+            in_header: beamer-header.txt
+---
+
+## Introduction : librairie *ggplot2* ([Wickham 2010](https://www.tandfonline.com/doi/abs/10.1198/jcgs.2009.07098))
+
+* Permet une représentation des données plus aisée et plus lisible lorsque l'on traite plus de 2 variables.
+* Adaptée au format *tibble*, sous-librairie de *tidyverse*. 
+* Construite sur une **grammaire superposée**, basée sur la *grammaire des graphiques* proposée par [Wilkinson en 2005](https://www.springer.com/us/book/9780387245447).
+* Graphiques construits en **couches indépendantes**, à inclure selon la représentation souhaitée :
+    + les __données__ à représenter ainsi que leurs __attributs esthétiques__ (axes, taille, couleurs, symboles, ...) 
+    + les __attributs géométriques__ (points, lignes, barres, ...)
+    + les __transformations statistiques__ (dénombrement, tendances, ...)
+    + les __échelles__ 
+    + le __système de coordonnées__ (cartésien, logarithmique, ...)
+    + le __découpage en facettes__ (plusieurs graphiques dans la même fenêtre). 
+* __Valeurs par défaut__: par exemple, couche *transformation statistique* effectuée par défaut si la couche *attributs géométriques* est "boxplot".
+
+## ggplot2 : fonctions et couches
+
+* **ggplot()** : fonction principale, crée et renvoie le graphique, en définissant quelles données sont représentées.
+* **aes()** : définit les attributs esthétiques.
+* **geom_xxx()** : définit la couche *attributs géométriques*.
+* **stat_xxx()** : définit la couche *transformations statistiques*.
+* **scale_xxx()** : définit la couche *échelles*.
+* **coord_xxx()** : définit la couche *système de coordonnées*.
+* **facet_xxx()** : définit la couche *découpage en facettes*.
+* **theme_xxx(), labs(), xlab(), ylab(), ggtitle()** : pour personnaliser le graphique.  
+
+* Seule *aes()* s'utilise à l'intérieur des autres fonctions, toutes les couches étant gérées de manière indépendante.
+* Possibilité d'enregistrer la sortie de *ggplot()* dans une variable, puis de lui ajouter des couches. Appeler la variable pour afficher le graphique.
+
+## Représentation en couches 
+
+* **Couche principale** : avec *ggplot()* et *aes()*, définition des données à représenter et des axes de coordonnées.  
+
+* Exemple avec les données *diamonds* :
+
+```{r, fig.height=4}
+library(ggplot2)
+ggplot(diamonds, aes(carat))
+```
+
+## Représentation en couches (2)
+
+* **Couche attributs géométriques** : ajout de la représentation souhaitée pour les données définies dans *ggplot()*.  
+
+* Exemple : ajout de l'histogramme de la variable *carat* :
+
+```{r, message=FALSE, fig.height=4}
+ggplot(diamonds, aes(carat)) + geom_histogram()
+```
+
+* **Remarque** : dans cet exemple, la couche *transformations statistiques* est cachée, correspondant au calcul des classes, amplitudes et densités de l'histogramme.
+
+## Représentation en couches (3)
+
+* Stockage du résultat dans une variable, à laquelle on peut ajouter des couches
+```{r, message=FALSE, fig.height=4}
+g = ggplot(diamonds, aes(carat))
+g+geom_histogram()
+```
+
+## Représentation en couches (4)
+
+* Stockage du résultat dans une variable, à laquelle on peut ajouter des couches
+```{r, message=FALSE, fig.height=4}
+g = ggplot(diamonds, aes(carat))+geom_histogram()
+g
+```
+
+## Personnalisation
+
+* Ajout d'un titre au graphique avec *ggtitle()*
+
+```{r, message=FALSE, fig.height=4}
+g = ggplot(diamonds, aes(carat))+geom_histogram()
+g+ggtitle("Distribution des carats")
+```
+
+## Personnalisation (2)
+
+* Changement du thème par défaut en classique avec *theme_classic()*
+
+```{r, message=FALSE, fig.height=4}
+g = ggplot(diamonds, aes(carat))+geom_histogram()
+g+ggtitle("Distribution des carats")+theme_classic()
+```
+
+## Personnalisation (3)
+
+* Changement du thème par défaut sans le fond gris avec *theme_light()*
+
+```{r, message=FALSE, fig.height=4}
+g = ggplot(diamonds, aes(carat))+geom_histogram()
+g+ggtitle("Distribution des carats")+theme_light()
+```
+
+* Autres thèmes disponibles dans la librairie (voir ?theme_light)
+
+## Personnalisation (4)
+
+* Gestion du nom de l'axe horizontal (abcisses) avec *xlab()*
+
+```{r, message=FALSE, fig.height=4}
+g = ggplot(diamonds, aes(carat))+geom_histogram()
+g+ggtitle("Distribution des carats")+xlab("Carats")
+```
+
+## Personnalisation (5)
+
+* Gestion du nom de l'axe vertical (ordonnées) avec *ylab()*
+
+```{r, message=FALSE, fig.height=4}
+g = ggplot(diamonds, aes(carat))+geom_histogram()
+g+ggtitle("Distribution des carats")+ylab("Effectif")
+```
+
+## Personnalisation (6)
+
+* Gestion du titre et des noms des axes avec *labs()*
+
+```{r, message=FALSE, fig.height=4}
+g = ggplot(diamonds, aes(carat))+geom_histogram()
+g+labs(title="Distribution des carats", 
+       x="Carats", y="Effectif")
+```
+
+* Personnalisation de la position, taille, couleur, etc... d'un nom ou titre avec *theme()*
+
+## Aspect suivant une variable
+
+* Exemple : création d'une barre de comptage avec *geom_bar()*
+
+```{r, message=FALSE, out.width = '75%', fig.align="center"}
+ggplot(diamonds, aes(x=""))+geom_bar()
+```
+
+## Aspect suivant une variable (2)
+
+* Exemple : remplissage de la barre avec des couleurs suivant les modalités de la variable *cut*
+
+```{r, message=FALSE, out.width = '65%', fig.align="center"}
+ggplot(diamonds, aes(x="", fill=cut))+geom_bar()
+```
+
+* Remarque : légendes par défaut, peuvent être personnalisées (voir suite du cours)
+
+## TP : Exercice 1  
+
+* Représenter l'histogramme de la distribution de la variable *Sepal.Length* du jeu de données *iris* avec les valeurs par défaut.  
+
+* Changer le nombre de classes (=*bins*) souhaitées dans l'histogramme afin d'obtenir une distribution moins variable (indication : options *bins* **ou** *binwidth* dans la couche *geom_histogram*). 
+
+* Changer le thème afin d'obtenir un graphique sans fond gris.  
+
+* Ajouter un titre et des noms adaptés aux axes sur le graphique obtenu.  
+
+* Représenter la distribution des espèces sous forme de barre empilée. Ajouter un titre et enlever le nom de l'axe des abcisses.  
+
+* Représenter la distribution de la variable *Sepal.Length* conditionnellement à l'espèce sous forme de boîtes à moustaches (indication : *geom_boxplot*). Ajouter un titre et changer les noms des axes.
+
+## Changement d'échelle
+
+* Changement d'échelle en utilisant une formule dans *aes()*,  
+
+* Changement d'échelle en utilisant les variables crées par les fonctions du type *geom_xxx()*, de type *..xxx..*,  
+
+* Changement d'échelle en ajoutant une couche avec les fonctions du type  *scale_aspect esthétique à modifier_type de l'aspect()*.  
+
+* Exemple : changer l'effectif en fréquence ou en pourcentage dans un diagramme.
+
+## Changement d'échelle (2)
+
+* Exemple : changer l'effectif en fréquence dans le diagramme précédent en utilisant la variable *..count..* créée par *geom_bar()*
+
+```{r, message=FALSE, out.width = '65%', fig.align="center"}
+ggplot(diamonds, aes(x="", fill=cut))+
+  geom_bar(aes(y=..count../sum(..count..)))
+```
+
+## Changement d'échelle (3)
+
+* Remarque : option *position="fill"* dans *geom_bar()* pour le changement en fréquence $\Rightarrow$ même résultat.
+
+```{r, message=FALSE, out.width = '65%', fig.align="center"}
+ggplot(diamonds, aes(x="", fill=cut))+
+  geom_bar(position = "fill")
+```
+
+
+## Changement d'échelle (4)
+
+* Changer l'effectif en fréquence, puis la fréquence en pourcentage : fonction *scale_y_continuous()* (où *percent()* est chargé via la librairie *scales*)
+
+```{r, message=FALSE, out.width = '60%', fig.align="center"}
+library(scales)
+ggplot(diamonds, aes(x="", fill=cut))+
+  geom_bar(position = "fill")+
+  scale_y_continuous(labels = percent)
+```
+
+## Changement de coordonnées
+
+* Suivant le type de graphique souhaité, il peut être nécessaire de changer le type de coordonnées représentées.  
+
+* Exemples typiques:
+    + coordonnées cartésiennes (x,y) pour représenter une variable en fonction d'une autre,
+    + coordonnées logarithmiques (x, log(y)) pour représenter des concentrations,
+    + coordonnées polaires (xcos(y), xsin(y)) pour effectuer des diagrammes circulaires.  
+    
+* Par défaut, *ggplot()* représente les variables en coordonnées cartésiennes.  
+
+* Changement de coordonnées effectué en ajoutant une couche avec les fonctions du type *coord_xxx()*.
+
+## Changement de coordonnées (2)
+
+* Exemple : représentation de la distribution de la variable *cut* sous forme de diagramme circulaire avec la fonction *coord_polar()* (option *width=1* pour enlever le trou au centre du diagramme)
+```{r, message=FALSE, out.width = '45%', fig.align="center"}
+ggplot(diamonds, aes(x = "", fill = cut)) + 
+    geom_bar(position = "fill", width = 1) +
+    scale_y_continuous(labels = percent) +
+    coord_polar(theta = "y")
+```
+
+## Changement de coordonnées (3)
+
+* Exemple de code complet pour un diagramme circulaire propre :
+
+```{r, eval=FALSE}
+ggplot(diamonds, aes(x = "", fill = cut)) + 
+    geom_bar(position = "fill", width = 1) +
+    scale_fill_brewer(palette = "Set2") +
+    scale_y_continuous(labels = percent) +
+    coord_polar(theta = "y") +
+    theme_minimal() +
+    theme(axis.title = element_blank()) +
+    labs(fill = "Variable cut")
+```
+
+* où :
+    + *scale_fill_brewer(palette=xxx)* change les couleurs de remplissage,
+    + *theme(axis.title=element_blank())* enlève les noms des axes,
+    + *labs(fill=xxx)* change le nom de la légende.
+
+## Changement de coordonnées (4)
+
+* Résultat du code précédent :
+
+```{r, message=FALSE, echo=FALSE, out.width = '100%', fig.align="center"}
+ggplot(diamonds, aes(x = "", fill = cut)) + 
+    geom_bar(position = "fill", width = 1) +
+    scale_fill_brewer(palette = "Set2") +
+    scale_y_continuous(labels = percent) +
+    coord_polar(theta = "y") +
+    theme_minimal() +
+    theme(axis.title = element_blank()) +
+    labs(fill = "Variable cut")
+```
+
+
+## TP : Exercice 2 avec ggplot2 et scales
+
+* Reprendre l'histogramme créé dans l'exercice 1. Changer l'échelle des ordonnées afin d'avoir une représentation en densité (indication : variable *..density..* en sortie de la couche *geom_histogram*). Ajouter un titre et changer le nom des axes. 
+
+* Représenter sur le même graphique un histogramme par espèce.
+
+* Représenter la distribution des espèces sous forme de diagramme en barres horizontales (indication : *coord_flip()*). Ajouter un titre et changer les noms des axes.  
+
+* Refaire le même graphique avec une distribution en pourcentages.  
+
+* Représenter la distribution des espèces sous forme de diagramme circulaire avec les valeurs par défaut.  
+
+* Refaire le graphique précédent avec une représentation propre et un titre.
+
+## Superposition de graphiques
+
+* Aisée grâce à la grammaire ordonnée et la représentation en couches
+* Exemple : nuage de points des variables *carat* et *price* avec *geom_point()*, et ajout des valeurs sur les axes avec *geom_rug()*
+
+```{r, message=FALSE, out.width="60%", fig.align="center"}
+g = ggplot(diamonds, aes(carat, price))+geom_point()
+g+geom_rug()
+```
+
+## Superposition de graphiques (2)
+
+* Exemple : ajout d'une courbe de régression avec *geom_smooth()*
+
+```{r, message=FALSE, out.width="75%", fig.align="center"}
+g = ggplot(diamonds, aes(carat, price))+geom_point()
+g+geom_rug()+geom_smooth()
+```
+
+## Superposition de graphiques (3)
+
+* Exemple : ajouter la droite de régression avec *geom_smooth()* (option *se=FALSE* pour enlever l'intervalle de prédiction)
+
+```{r, message=FALSE, out.width="70%", fig.align="center"}
+g = ggplot(diamonds, aes(carat, price))+geom_point()
+g+geom_smooth(method = "lm", se = FALSE)
+```
+
+## Superposition de graphiques (4)
+
+* Représenter les points suivant les valeurs d'une variable avec *shape* et *col*
+* Exemple : nuage de points et courbe de régression avec des formes et des couleurs suivant les valeurs de la variable *cut*
+
+```{r, message=FALSE, warning=FALSE, out.width="65%", fig.align="center"}
+g = ggplot(diamonds, aes(carat, price, shape=cut, col=cut))+geom_point()
+g+geom_smooth(se = FALSE)
+```
+
+## Facettes
+
+* Afin de comparer différents graphiques, il peut être plus judicieux d'utiliser les facettes avec *facet_wrap()* et *facet_grid()*
+* Exemple : graphique précédent avec un graphique par valeur de la variable *cut*
+
+```{r, message=FALSE, warning=FALSE, out.width="65%", fig.align="center"}
+g = ggplot(diamonds, aes(carat, price))+geom_point()
+g+geom_smooth(se=FALSE)+facet_wrap(facets=~cut)
+```
+
+## Facettes (2)
+
+* Réglage de la position des facettes avec les options *ncol=* et *nrow=*
+
+```{r, message=FALSE, warning=FALSE, out.width="65%", fig.align="center"}
+g = ggplot(diamonds, aes(carat, price))+geom_point()
+g+geom_smooth(se=FALSE)+facet_wrap(facets=~cut, ncol=2)
+```
+
+## Facettes (3)
+
+* *facet_wrap()* : réglage automatique de la position des facettes en fonction du nombre de modalités,
+* *facet_grid()* : répartition sur une seule ligne, ou une seule colonne.
+* Exemple : représentation en ligne des boîtes à moustaches de *carat* suivant les modalités de la variable *color*, et ce pour chaque modalité de la variable *cut*
+
+```{r, message=FALSE, warning=FALSE, out.width="65%", fig.height=4, fig.align="center"}
+g = ggplot(diamonds, aes(color, carat))+geom_boxplot()
+g+facet_grid(facets=~cut)
+```
+
+## Facettes (4)
+
+* Représentation en colonne des histogrammes de *carat* suivant les modalités de la variable *cut*
+
+```{r, message=FALSE, warning=FALSE, out.width="75%", fig.align="center"}
+g = ggplot(diamonds, aes(carat))+geom_histogram()
+g+facet_grid(facets=cut~.)
+```
+
+## Facettes (5)
+
+* Gestion des échelles sur chaque facette : laisser libre l'échelle des ordonnées avec *scales="free_y"*
+
+```{r, message=FALSE, warning=FALSE, out.width="75%", fig.align="center"}
+g = ggplot(diamonds, aes(carat))+geom_histogram()
+g+facet_grid(facets=cut~., scales="free_y")
+```
+
+## Facettes (6)
+
+* Possibilité de faire une graphique par couple de modalités
+* Exemple : un nuage de point de *price* en fonction de *carat*, avec la droite de régression, et ce pour chaque modalité de la variable *color* (en lignes) et de la variable *cut* (en colonnes)
+
+```{r, eval=FALSE}
+g = ggplot(diamonds, aes(carat, price)) + geom_point() +
+    geom_smooth(method = "lm", fullrange = T)
+g+facet_grid(facets = color ~ cut)
+```
+
+## Facettes (7)
+
+* Résultat du code précédent
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.align="center"}
+g = ggplot(diamonds, aes(carat, price)) + geom_point() +
+    geom_smooth(method = "lm", fullrange = T)
+g+facet_grid(facets = color ~ cut)
+```
+
+
+## TP : Exercice 3 avec ggplot2 et scales
+
+* Représenter le nuage de points des longueurs de Sépales en fonction de leurs largeurs. Ajouter la courbe de régression.  
+
+* Refaire la question précédente avec, sur le même graphique, des formes et des couleurs de points différents pour chaque espèce. Ajouter les droites de régression et les indicateurs de valeurs par espèce.  
+
+* Séparer le graphique précédent en facettes, avec un graphique par espèces.    
+* Reprendre l'histogramme en densité créé dans l'exercice 2. Représenter sur une colonne un histogramme par espèce d'iris.  
+
+## Changements dans la légende
+
+* Changement de position : couche *theme(legend.position = xxx)* avec *xxx* = "left", "top", "right", "bottom", "none" (supprime la légende).  
+
+* Changement de titre : couche *labs(xxx=nom)* s'il existe une variable pour *xxx*, où *xxx=fill*, *color*, etc... Suppression du titre avec *nom = element_blank()*.  
+
+* Changement de l'ordre des modalités : couche *scale_xxx_discrete(limits = c(yyy))*, où  
+
+    + *xxx=x* si modalités en abcisse et *xxx=y* si modalités en ordonnée,
+    + *yyy* nouvel ordre d'apparition des modalités.  
+    
+* Changement des modalités dans la légende : couche *scale_xxx_hue(labels = )* s'il existe une variable pour *xxx*, où *xxx=fill*, *color*, etc....  
+
+## Gestion des tables complexes avec *gather*
+
+* Fonction *gather()* (librairie *tidyr*) : crée une table longue en déployant la table de données (=table large) sur 2 colonnes *(key,value)*, où *key* est le nom de la variable, et *value* sa valeur pour chaque observation.
+
+* Exemple : déploiement de la table *diamonds* sur les variables *carat*, *price*, *depth* et *cut*
+```{r, eval=FALSE}
+library(dplyr)
+library(tidyr)
+diamonds %>% select(carat, price, depth, cut) %>% 
+  gather()
+```
+
+* Passage d'une table $nobs\times nvar$ à une table $nobs*nvar \times 2$.
+
+* Exemple : garder les valeurs de *carat* pour chaque observation :
+```{r, eval=FALSE}
+diamonds %>% select(carat, price, depth, cut) %>% 
+  gather(-carat, key="key", value="value")
+```
+
+
+## Gestion des tables complexes avec *gather* (2)
+
+* Exemple : Représentation de *price* et *depth* en fonction de *carat*
+```{r, echo=FALSE, message=FALSE}
+library(dplyr)
+library(tidyr)
+```
+
+```{r, message=FALSE, warning=FALSE, out.width="65%", fig.align="center"}
+diamonds %>% select(carat,price,depth) %>% 
+  gather(-carat, key = "var", value = "value") %>% 
+  ggplot(aes(carat, value))+geom_point()+
+  facet_grid(facets=var~., scales="free_y")
+```
+
+## Gestion des tables complexes avec *gather* (3)
+
+* Exemple : Représentation de *price* et *depth* en fonction de *carat*, avec une couleur par modalité de *cut*
+```{r, message=FALSE, warning=FALSE, out.width="70%", fig.align="center"}
+diamonds %>% select(carat,price,depth, cut) %>% 
+  gather(-carat, -cut, key = "var", value = "value") %>% 
+  ggplot(aes(carat, value, color=cut))+geom_point()+
+  facet_grid(facets=var~., scales="free_y")
+```
+
+## TP : Exercice 4 avec avec ggplot2, scales, dplyr et tidyr
+
+* Reprendre le graphique de la distribution des espèces en barre empilée créé dans l'exercice 1.
+    + Changer la position de la légende
+    + Changer le titre de la légende
+    
+* Représenter les nuages de points des trois variables *Sepal.Length*, *Petal.Width* et *Petal.Length* en fonction de la variable *Sepal.Width*.  
+
+* Reprendre le graphique précédent et colorer les points suivant les espèces.  
+
+## Réordonner les modalités
+
+* Librairie *forcats* : permet de réordonner les modalités d'une variable selon les valeurs d'une autre variable.  
+
+* Deux fonctions :
+    + *fct_reorder()* : répartition par ordre croissant ou décroissant,  
+    
+    + *fct_shuffle()* : répartition aléatoire.  
+    
+* Exemple : représentation de la moyenne de *price* en fonction des valeurs de *cut*, en réordonnant les valeurs de la table résumée *df* suivant les modalités de *cut*
+```{r}
+df = diamonds %>%
+    group_by(cut) %>%
+    summarise(
+        mean = mean(price, na.rm = T),
+        sd = sd(price, na.rm = T)
+    )
+```
+
+## Réordonner les modalités (2)
+
+* Ordre original
+```{r, out.width="75%", fig.align="center"}
+ggplot(df, aes(cut, mean))+geom_point()
+```
+
+## Réordonner les modalités (3)
+
+* Réordonner les modalités de *cut* par ordre croissant de la moyenne de *price*
+```{r, out.width="75%", fig.align="center"}
+library(forcats)
+ggplot(df, aes(fct_reorder(cut, mean), mean))+geom_point()
+```
+
+## Réordonner les modalités (4)
+
+* Réordonner par ordre décroissant de la moyenne
+```{r, out.width="60%", fig.align="center"}
+ggplot(
+  df, 
+  aes(fct_reorder(cut, mean, .desc = TRUE), mean)
+  )+
+  geom_point()
+```
+
+## Réordonner les modalités (5)
+
+* Réordonner aléatoirement les modalités de *cut*
+```{r, out.width="75%", fig.align="center"}
+ggplot(df, aes(fct_shuffle(cut), mean))+geom_point()
+```
+
+## Gestion de la représentation simultanée 
+
+Trois syntaxes donnant le même résultat :
+
+* données et variable spécifiées pour l'ensemble des couches.
+```{r, eval=FALSE}
+ggplot(diamonds, aes(x = price)) + geom_histogram()
+```
+
+* données spécifiées pour l'ensemble des couches, variables à spécifier dans chaque couche.
+```{r, eval=FALSE}
+ggplot(diamonds) + 
+  geom_histogram(mapping = aes(x = price))
+```
+
+* données et variables à spécifier dans chaque couche.
+```{r, eval=FALSE}
+ggplot() + 
+  geom_histogram(data = diamonds, mapping = aes(x = price))
+```
+
+* Utile pour représenter sur le même graphique des données issues de tables différentes.
+
+## Gestion de la représentation simultanée (2)
+
+* Exemple : ajouter la moyenne, ainsi qu'un indicateur de dispersion (avec *geom_errorbar()*) sur les boîtes à moustaches du prix suivant la variable *cut*.
+```{r, eval = FALSE, out.width="75%", fig.align="center"}
+ggplot(diamonds, aes(cut, price, color = cut)) +
+  scale_color_brewer(palette = "Set2") +
+  scale_fill_brewer(palette = "Set2") +
+  geom_boxplot(show.legend = FALSE) +
+  geom_errorbar(data = df, 
+                mapping = aes(y = mean, 
+                              ymin = mean - sd, 
+                              ymax = mean + sd), 
+                col = "gray70", width = .4, size = 1) +
+  geom_point(data = df, 
+             mapping = aes(y = mean), 
+             col = "steelblue", size = 2) +
+  theme_light()
+```
+
+## Gestion de la représentation simultanée (3)
+
+* Résultat du code précédent
+```{r, echo = FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.align="center"}
+ggplot(diamonds, aes(cut, price, color = cut)) +
+  scale_color_brewer(palette = "Set2") +
+  scale_fill_brewer(palette = "Set2") +
+  geom_boxplot(show.legend = FALSE) +
+  geom_errorbar(data = df, 
+                mapping = aes(y = mean, 
+                              ymin = mean - sd, 
+                              ymax = mean + sd), 
+                col = "gray70", width = .4, size = 1) +
+  geom_point(data = df, 
+             mapping = aes(y = mean), 
+             col = "steelblue", size = 2) +
+  theme_light()
+```
+
+## TP : Exercice 5 avec ggplot2, scales et forcats
+
+* Reprendre les 3 histogrammes par espèce créés dans l'exercice 3. Ajouter une ligne verticale représentant la moyenne pour chaque espèce (indication : *geom_vline*).  
+
+* Créer une table de données *df* résumant la variable *Sepal.Length* par ses moyennes et écart-types par espèce.  
+
+* Reprendre les boîtes à moustaches crées dans l'exercice 1. Colorer chaque boîte à moustaches et enlever la légende.  
+
+* Ajouter sur chaque boîte à moustache la moyenne (sous forme de point) et l'écart-type (sous forme de barre).  
+
+* Refaire le graphique précédent en réordonnant les modalités par moyenne décroissante.
+
+## TP : Exercice 6 avec ggplot2, dplyr, tidyr et readr
+
+* Reprendre les données de la banque mondiale. Créer deux tables (une large et une longue) avec uniquement les valeurs estimées. Créer un indicateur de données manquantes dans la table longue.  
+
+* Représenter sur un graphique l'évolution du pourcentage de données manquantes en fonction de l'année. Indication : changer les étiquettes de la variable *annee* en valeurs numériques
+```{r, eval=FALSE}
+as.numeric(substring(annee, 2))
+```
+ 
+* Créer la table longue restreinte aux valeurs du contrôle de la corruption et représenter sa distribution en fonction de l'année. 
+
+* Représenter la courbe de l'évolution en moyenne en fonction de l'année. Mettre des noms et un titre appropriés au graphique.  
+
+* Ajouter au graphique précédent l'évolution des pays "France", "Somalia" et "Denmark", avec une légende correcte ainsi qu'une couleur par pays.  
+
+## Cartographie
+
+* **Carte choroplèthe** : carte géographique dont chaque zone est colorée selon une mesure statistique.  
+
+* Etape 1 : charger les données géographiques, par exemple directement sur le web avec *geojson_read()*
+```{r, message=FALSE}
+library(geojsonio)
+etats = geojson_read(
+  'https://datahub.io/core/geo-countries/r/countries.geojson',
+  what = "sp")
+```
+* où l'option *what* règle le format d'importation. Ici, on importe au format *"spatial"*.  
+
+* Ici, *etats* contient toutes les informations nécessaires à la constitution de la carte (latitudes, longitudes, noms des pays, etc...)   
+
+## Cartographie (2)
+
+* Etape 2 : représentation de la carte. Exemple avec *ggplot2* (après convertion de la table pour ggplot2 avec *fortify*)
+```{r, eval=FALSE}
+etats_f = fortify(etats)
+ggplot(etats_f, aes(long, lat, group = group)) +
+  geom_polygon(color = "white") +
+  theme_void()
+```
+où *theme_void()* indique un thème vide.
+
+## Cartographie (3)
+
+* Etape 3 : colorer chaque zone en fonction d'une mesure statistique. Ici on associe à chaque zone une valeur aléatoire entre $0$ et $1$
+```{r, eval=FALSE}
+library(tibble) # pour rownames_to_column
+etats@data$var = runif(nrow(etats@data))
+etats_f = fortify(etats)
+etats_fj = etats_f %>%
+  inner_join(etats@data %>% rownames_to_column("id"), 
+             by = "id")
+ggplot(etats_fj, 
+       aes(long, lat, group = group, fill = var)
+       ) +
+  geom_polygon(color = "white") +
+  theme_void()
+```
+
+## Cartographie avec leaflet
+
+* Personnalisation et interaction utilisateur avec la librairie *leaflet* (voir [ici](https://rstudio.github.io/leaflet/) pour une présentation complète de la librairie).  
+
+* Création d'une carte en 3 étapes :  
+    + Etape 1 : création de la carte avec *leaflet()*,
+    + Etape 2 : ajout d'un fond de carte avec *addTiles()* (voir [ici](http://leaflet-extras.github.io/leaflet-providers/preview/index.html) pour les différents fonds de carte),
+    + Etape 3 : ajout des polygones avec *addPolygons()*.  
+    
+* Exemple avec les données géographiques *etats*
+```{r, eval=FALSE}
+library(leaflet)
+leaflet(etats) %>% 
+  addTiles() %>%
+  addPolygons()
+```
+
+* Remarque : avec *leaflet*, ici pas besoin de re-configurer les données.
+
+## Cartographie avec leaflet (2)
+
+* Association des mesures statistiques à une palette de couleur avec la fonction *colorBin()*
+```{r, eval=FALSE}
+palette = colorBin("YlOrRd", domain = etats$var)
+```
+* où  
+    + *"YlOrd"* définit la palette de couleurs (ici entre jaune et rouge, voir [color brewer](http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3) ou [veridis](http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3) pour d'autres choix de palettes),
+    + *domain* definit les mesures à associer aux couleurs.  
+    
+* Représentation de la carte choroplèthe en indiquant que la couleur de remplissage est fonction de la palette et de la variable avec *fillColor*, et en réglant l'opacité des couleurs avec *fillOpacity* 
+```{r, eval=FALSE}
+leaflet(etats) %>% 
+  addTiles() %>%
+  addPolygons(fillColor = ~palette(var), 
+              fillOpacity = .5)
+```
+
+## Cartographie avec leaflet (3)
+
+* Amélioration de la carte précédente : personnalisation de la palette
+```{r, eval=FALSE}
+palette = colorBin(
+  "magma", 
+  domain = etats$var, 
+  bins = seq(0, 1, by = .2)
+  )
+```
+
+* où l'option *bins* définit le découpage des valeurs de la mesure en classes, chaque classe étant ensuite associée à une couleur (valeur par défaut = $7$).
+
+## Cartographie avec leaflet (4)
+```{r, eval=FALSE}
+leaflet(etats) %>% 
+  setView(lat = 0, lng = 0, zoom = 1) %>%
+  addTiles() %>%
+  addPolygons(
+    fillColor = ~palette(var), 
+    fillOpacity = .5,
+    color = "gray30", 
+    weight = 1.5, 
+    opacity = 1, 
+    dashArray = "2"
+  ) %>%
+  addLegend(
+    pal = palette, 
+    values = ~var, 
+    opacity = 0.8, 
+    title = "Variable aleatoire",
+    position = "bottomright"
+  )
+```
+
+## TP : Exercice 7 avec geojsonio, leaflet, tibble, dplyr et readr
+
+* Rreprendre les données et les graphiques de l'exercice 6. Représenter sur une carte la valeur du contrôle de la corruption en 2016 pour chaque pays. Ajouter au graphique un titre et des légendes convenables.  
+
+
